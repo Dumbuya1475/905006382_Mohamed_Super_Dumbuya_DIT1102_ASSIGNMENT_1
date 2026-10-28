@@ -1,115 +1,141 @@
-"""
-PROG211: Object-Oriented Programming 1
-Assignment: Citizen Complaint System (Digital Public Goods Standard)
+# PROG211: Object-Oriented Programming 1
+# Student Learning and Results Management System
 
-Domain: Government (Citizen Complaint System)
-DPG Compliance:
-- Open-Source & Modular Architecture
-- Privacy-Respecting: Uses anonymized Citizen IDs instead of personal details
-"""
+class Course:
+    def __init__(self, course_code, course_name, lecturer):
+        self.course_code = course_code
+        self.course_name = course_name
+        self.lecturer = lecturer
 
-
-class Citizen:
-    """Represents a citizen issuing a complaint using anonymized identifiers."""
-
-    def __init__(self, citizen_id: str, district: str):
-        self.citizen_id = citizen_id  # Anonymized ID to respect privacy
-        self.district = district
-
-    def display_info(self) -> None:
-        """Instance method to display anonymized citizen details."""
-        print(f"Citizen ID: {self.citizen_id} | District: {self.district}")
+    def display_course(self):
+        print(f"Course Code: {self.course_code}")
+        print(f"Course Name: {self.course_name}")
+        print(f"Lecturer: {self.lecturer}")
 
 
-class Complaint:
-    """Represents a public service complaint filed by a citizen."""
+class Student:
+    student_count = 0
 
-    total_complaints = 0  # Class attribute for tracking count
+    def __init__(self, student_id, name, program, course):
+        self.student_id = student_id
+        self.name = name
+        self.program = program
+        self.course = course
+        Student.student_count += 1
 
-    def __init__(self, complaint_id: str, citizen: Citizen, category: str, description: str):
-        self.complaint_id = complaint_id
-        self.citizen = citizen  # Object interaction / association
-        self.category = category
-        self.description = description
-        self.status = "Pending"
-        
-        Complaint.total_complaints += 1
+    # Instance method
+    def display_info(self):
+        print(f"Student ID: {self.student_id}")
+        print(f"Name: {self.name}")
+        print(f"Program: {self.program}")
+        print(f"Course: {self.course.course_name}")
+        print(f"Course Code: {self.course.course_code}")
 
-    def resolve_complaint(self) -> None:
-        """Instance method to update complaint status."""
-        self.status = "Resolved"
-        print(f"Complaint {self.complaint_id} has been marked as Resolved.")
+    # Instance method
+    def update_program(self, new_program):
+        self.program = new_program
 
-    def display_info(self) -> None:
-        """Instance method to display full complaint details."""
-        print(f"[Complaint ID: {self.complaint_id}]")
-        print(f"  Category: {self.category}")
-        print(f"  Description: {self.description}")
-        print(f"  Status: {self.status}")
-        self.citizen.display_info()
-
+    # Class method
     @classmethod
-    def get_total_complaints(cls) -> int:
-        """Class method returning total complaints created."""
-        return cls.total_complaints
+    def create_student(cls, student_id, name, program, course):
+        return cls(student_id, name, program, course)
+
+    # Static method
+    @staticmethod
+    def validate_student_id(student_id):
+        return student_id.startswith("ST") and len(student_id) == 5
 
 
-# --- Data Structure Integration (Task 2: Dictionary implementation) ---
-# Dictionary to store complaints using unique complaint_id as the key
-complaint_registry: dict[str, Complaint] = {}
+# Create Course objects
+course1 = Course(
+    "DIT1102",
+    "Web Design and Development",
+    "Mr. Amkam"
+)
+
+course2 = Course(
+    "PROG211",
+    "Object-Oriented Programming 1",
+    "Mr. Julius Laggah"
+)
 
 
-def add_complaint(complaint: Complaint) -> None:
-    """Adds a complaint object to the central registry dictionary."""
-    complaint_registry[complaint.complaint_id] = complaint
-    print(f"Successfully registered Complaint ID: {complaint.complaint_id}")
+# Create Student objects
+student1 = Student(
+    "ST001",
+    "Mohamed Dumbuya",
+    "Diploma in Information Technology",
+    course1
+)
+
+student2 = Student(
+    "ST002",
+    "Abdulai Kamara",
+    "Diploma in Information Technology",
+    course2
+)
+
+# Create another student using the class method
+student3 = Student.create_student(
+    "ST003",
+    "Fatmata Sesay",
+    "Diploma in Information Technology",
+    course1
+)
 
 
-def display_all_complaints() -> None:
-    """Iterates through and displays all registered complaints."""
-    print("\n" + "=" * 40)
-    print("      PUBLIC COMPLAINT REGISTRY LOG      ")
-    print("=" * 40)
-    if not complaint_registry:
-        print("No complaints recorded.")
-        return
+# One data structure: a list
+students = []
 
-    for complaint_id, complaint_obj in complaint_registry.items():
-        complaint_obj.display_info()
-        print("-" * 40)
+# Add students to the list
+students.append(student1)
+students.append(student2)
+students.append(student3)
 
 
-# --- Demonstration of Program Execution ---
-if __name__ == "__main__":
-    # 1. Object Creation & Interaction
-    citizen_1 = Citizen(citizen_id="CIT-1042", district="Western Area Urban")
-    citizen_2 = Citizen(citizen_id="CIT-8821", district="Bo District")
+# Function to add a student to the list
+def add_student(student):
+    students.append(student)
+    print("Student added successfully.")
 
-    complaint_1 = Complaint(
-        complaint_id="CMP-001",
-        citizen=citizen_1,
-        category="Sanitation",
-        description="Waste management overflow at local market."
-    )
 
-    complaint_2 = Complaint(
-        complaint_id="CMP-002",
-        citizen=citizen_2,
-        category="Road Infrastructure",
-        description="Pothole obstruction on main arterial street."
-    )
+# Function to display all students
+def display_students():
+    print("\n===== STUDENT RECORDS =====")
 
-    # 2. Add Records to Dictionary Data Structure
-    print("\n--- Registering Complaints ---")
-    add_complaint(complaint_1)
-    add_complaint(complaint_2)
+    for student in students:
+        print("---------------------------")
+        student.display_info()
 
-    # 3. Display Records from Data Structure
-    display_all_complaints()
 
-    # 4. Demonstrate Method Execution
-    print("\n--- Updating Status ---")
-    complaint_1.resolve_complaint()
+# Demonstrate object interaction
+print("===== COURSE INFORMATION =====")
+course1.display_course()
 
-    # 5. Class Method Execution
-    print(f"\nTotal Complaints Logged across System: {Complaint.get_total_complaints()}")
+print("\n===== STUDENT INFORMATION =====")
+student1.display_info()
+
+# Update a student's program
+print("\n===== UPDATING STUDENT RECORD =====")
+student1.update_program("Diploma in Software Engineering")
+print("Updated program:")
+student1.display_info()
+
+
+# Demonstrate static method
+print("\n===== STUDENT ID VALIDATION =====")
+
+valid_id = Student.validate_student_id("ST001")
+invalid_id = Student.validate_student_id("ABC12")
+
+print("ST001 valid:", valid_id)
+print("ABC12 valid:", invalid_id)
+
+
+# Display all records stored in the list
+display_students()
+
+
+# Demonstrate class variable
+print("\n===== TOTAL STUDENTS =====")
+print("Total students:", Student.student_count)
